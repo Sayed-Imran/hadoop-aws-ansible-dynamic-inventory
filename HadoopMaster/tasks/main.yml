@@ -1,0 +1,30 @@
+          - name: "Configuring the HDFS file"
+            copy:
+                 src: "hdfs-site.xml"
+                 dest: "/etc/hadoop/hdfs-site.xml"
+
+          - name: "Configuring the CORE file"
+            copy:
+                 src: "core-site.xml"
+                 dest: "/etc/hadoop/core-site.xml"
+
+
+          - name: "Creating the Namenode directory"
+            file:
+                  state: directory
+                  path: /nn
+
+          - name: "Formatting the Namenode directory"
+            shell: "hadoop namenode -format -force"
+            ignore_errors: yes
+
+
+          - name: "Starting the NameNode"
+            shell: "hadoop-daemon.sh start namenode"
+            ignore_errors: yes
+
+          - name: Making Hadoop Daemon Service Permanent
+            lineinfile:
+               path: /etc/rc.d/rc.local
+               line: hadoop-daemon.sh start namenode
+               mode: '0755'

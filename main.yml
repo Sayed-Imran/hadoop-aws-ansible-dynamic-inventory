@@ -1,0 +1,38 @@
+- hosts: localhost
+  roles:
+  - role: ec2
+
+  tasks:
+    - name: Pausing the Playbook so that all the instances are launched and ready for use
+      pause:
+        seconds: 20
+
+- hosts: all
+  tasks:
+   - name: Downloading Java Software
+     get_url:
+        url: https://mirrors.huaweicloud.com/java/jdk/8u171-b11/jdk-8u171-linux-x64.rpm
+        dest: /home/ec2-user/java.rpm
+
+   - name: Downloading Hadoop Software
+     get_url:
+        url: https://archive.apache.org/dist/hadoop/core/hadoop-1.2.1/hadoop-1.2.1-1.x86_64.rpm
+        dest: /home/ec2-user/hadoop.rpm
+
+   - name: Installing Java on all the Nodes
+     shell: rpm -i java.rpm
+     ignore_errors: yes
+
+   - name: Installing Hadoop on all the Nodes
+     shell: rpm -i hadoop.rpm --force
+     ignore_errors: yes
+   
+
+
+- hosts: "tag_Name_HadoopMaster"
+  roles:
+  - role: HadoopMaster
+
+- hosts: "tag_Name_HadoopSlave"
+  roles:
+  - role: HadoopSlave

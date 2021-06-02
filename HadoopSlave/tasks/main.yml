@@ -1,0 +1,24 @@
+          - name: "Configuring the HDFS file"
+            copy:
+                   src: "hdfs-site.xml"
+                   dest: "/etc/hadoop/hdfs-site.xml"
+
+          - name: "Configuring the CORE file"
+            template:
+                   src: "core-site.xml"
+                   dest: "/etc/hadoop/core-site.xml"
+
+          - name: "Creating datanode directory"
+            file:
+                   state: directory
+                   path: /dn
+
+          - name: "Starting the datanode"
+            shell: "hadoop-daemon.sh start datanode"
+            ignore_errors: yes
+
+          - name: Making Hadoop Daemon Service Permanent
+            lineinfile:
+            path: /etc/rc.d/rc.local
+            line: hadoop-daemon.sh start datanode
+            mode: '0755'
